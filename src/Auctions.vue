@@ -24,6 +24,9 @@
             <img src="./assets/auctionBanner.png">
             <br/>
 
+            <input v-model="auctionSearchString" type="text" placeholder="Search..">
+            <button type="button" v-on:click=getAuctions>Search</button>
+
             <!-- Auction type combo box -->
             <select v-model="auctionType" v-on:change="getAuctions">
                 <option disabled>Auction Type</option>
@@ -33,7 +36,7 @@
                 <option value="won">Won</option>
                 <option value="upcoming">Upcoming</option>
             </select>
-            <span>Selected: {{ auctionType }} Count: {{ auctions.length }}</span>
+            <span>Selected: {{ auctionType }} Count: {{ auctions.length }} SearchStr: {{ auctionSearchString }}</span>
 
             <!-- All auctions table -->
             <div id="auctions">
@@ -57,8 +60,8 @@
                 error: "",
                 errorFlag: false,
                 auctions: [],
-                auctionType: "all"
-
+                auctionType: "all",
+                auctionSearchString: ""
             }
         },
 
@@ -68,9 +71,16 @@
 
         methods: {
             getAuctions: function () {
-                this.auctions = [];
                 console.log("Calling getAuctions... with type " + this.auctionType);
-                this.$http.get('http://localhost:4941/api/v1/auctions', { "status" : this.auctionType }).then(
+
+                let params;
+                if (this.auctionSearchString === "") {
+                    params = { "status" : this.auctionType }
+                } else {
+                    params = { "status" : this.auctionType,
+                                    "q" : this.auctionSearchString}
+                }
+                this.$http.get('http://localhost:4941/api/v1/auctions', {params: params}).then(
                     function (response) {
                         console.log(response.body);
                         this.auctions = response.data;
