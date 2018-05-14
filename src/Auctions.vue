@@ -21,7 +21,8 @@
             <!-- Banner -->
             <img src="./assets/auctionBanner.png">
             <br/>
-
+            
+            <!-- Search field -->
             <input v-model="auctionSearchString" type="text" placeholder="Search..">
             <button type="button" v-on:click=getAuctions>Search</button>
 
@@ -33,6 +34,17 @@
                 <option value="expired">Expired</option>
                 <option value="won">Won</option>
                 <option value="upcoming">Upcoming</option>
+            </select>
+
+            <!-- Auction category combo box -->
+            <select v-model="auctionCategoryId" v-on:change="getAuctions">
+                <option disabled>Auction Category</option>
+                <option selected value="">All</option>
+                <option value="1">Apparel</option>
+                <option value="2">Equipment</option>
+                <option value="3">Vehicles</option>
+                <option value="4">Property</option>
+                <option value="5">Other</option>
             </select>
             <span>Selected: {{ auctionType }} Count: {{ auctions.length }} SearchStr: {{ auctionSearchString }}</span>
 
@@ -58,7 +70,8 @@
                 errorFlag: false,
                 auctions: [],
                 auctionType: "all",
-                auctionSearchString: ""
+                auctionSearchString: "",
+                auctionCategoryId: ""
             }
         },
 
@@ -70,13 +83,18 @@
             getAuctions: function () {
                 console.log("Calling getAuctions... with type " + this.auctionType);
 
-                let params;
-                if (this.auctionSearchString === "") {
-                    params = { "status" : this.auctionType }
-                } else {
-                    params = { "status" : this.auctionType,
-                                    "q" : this.auctionSearchString}
+                let params = { "status" : this.auctionType }
+                
+                // Check if auction search string provided
+                if (this.auctionSearchString !== "") {
+                    params["q"] = this.auctionSearchString;
                 }
+
+                // Check if auction category provided
+                if (this.auctionCategoryId !== "") {
+                    params["category-id"] = this.auctionCategoryId;
+                }
+                
                 this.$http.get('http://localhost:4941/api/v1/auctions', {params: params}).then(
                     function (response) {
                         console.log(response.body);
