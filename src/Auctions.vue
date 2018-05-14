@@ -1,7 +1,5 @@
 <template>
     <div>
-
-
         <!-- Error Section -->
         <div v-if="errorFlag" style="color: red;">
             {{ error }}
@@ -40,10 +38,9 @@
 
             <!-- All auctions table -->
             <div id="auctions">
-                <div v-for="auction in auctions">
+                <div v-for="auction in auctions" :key="auction.id">
                     <h1><router-link :to="{ name: 'auction', params: { auctionId: auction.id }}">{{ auction.title }}</router-link></h1>
                     <h2>{{ auction.id }}</h2>
-
                     <img v-bind:src=auction.photoLink border="5">
                 </div>
             </div>
