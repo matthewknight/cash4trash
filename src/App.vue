@@ -14,6 +14,12 @@
     margin-top: 60px;
 }
 
+#auction-photo-wrapper {
+  width: 80%;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
 h1,
 h2 {
     font-weight: normal;
@@ -32,4 +38,5 @@ li {
 a {
     color: #42b983;
 }
+
 </style>

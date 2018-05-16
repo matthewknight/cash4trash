@@ -5,55 +5,66 @@
             {{ error }}
         </div>
 
-        <div v-if="$route.params.auctionId">
-            <!-- Banner -->
-            <img src="./assets/singleAuctionBanner.png">
-
-            <!-- Single auction view -->
-            <div id="auction">
-                <router-link :to="{ name: 'auctions'}">Back to Auctions</router-link>
-                <h1>{{ getSingleAuction($route.params.auctionId).title }}</h1>
-                <h2>{{ getSingleAuction($route.params.auctionId).id }}</h2>
-                <img v-bind:src=getSingleAuction($route.params.auctionId).photoLink border="5">
-            </div>
-        </div>
-        <div v-else>
+        <div>
             <!-- Banner -->
             <img src="./assets/auctionBanner.png">
             <br/>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                    <th scope="col">Search</th>
+                    <th scope="col">Auction Type</th>
+                    <th scope="col">Category</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                    <td><input v-model="auctionSearchString" type="text" placeholder="Search.." v-on:oninput="getAuctions"></td>
+                    <td>
+                        <select v-model="auctionType" v-on:change="getAuctions">
+                            <option disabled>Auction Type</option>
+                            <option selected value="all">All</option>
+                            <option value="active">Active</option>
+                            <option value="expired">Expired</option>
+                            <option value="won">Won</option>
+                            <option value="upcoming">Upcoming</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select v-model="auctionCategoryId" v-on:change="getAuctions">
+                            <option disabled>Auction Category</option>
+                            <option selected value="">All</option>
+                            <option value="1">Apparel</option>
+                            <option value="2">Equipment</option>
+                            <option value="3">Vehicles</option>
+                            <option value="4">Property</option>
+                            <option value="5">Other</option>
+                        </select>
+                    </td>
+                    </tr>
+                    
+                </tbody>
+            </table>
             
             <!-- Search field -->
-            <input v-model="auctionSearchString" type="text" placeholder="Search..">
             <button type="button" v-on:click=getAuctions>Search</button>
 
             <!-- Auction type combo box -->
-            <select v-model="auctionType" v-on:change="getAuctions">
-                <option disabled>Auction Type</option>
-                <option selected value="all">All</option>
-                <option value="active">Active</option>
-                <option value="expired">Expired</option>
-                <option value="won">Won</option>
-                <option value="upcoming">Upcoming</option>
-            </select>
+            
 
             <!-- Auction category combo box -->
-            <select v-model="auctionCategoryId" v-on:change="getAuctions">
-                <option disabled>Auction Category</option>
-                <option selected value="">All</option>
-                <option value="1">Apparel</option>
-                <option value="2">Equipment</option>
-                <option value="3">Vehicles</option>
-                <option value="4">Property</option>
-                <option value="5">Other</option>
-            </select>
+            <br/><br/>
             <span>Selected: {{ auctionType }} Count: {{ auctions.length }} SearchStr: {{ auctionSearchString }}</span>
-
+            <br/><br/>
             <!-- All auctions table -->
             <div id="auctions">
                 <div v-for="auction in auctions" :key="auction.id">
                     <h1><router-link :to="{ name: 'auction', params: { auctionId: auction.id }}">{{ auction.title }}</router-link></h1>
                     <h2>{{ auction.id }}</h2>
-                    <img v-bind:src=auction.photoLink border="5">
+                    <div id="auction-photo-wrapper">
+                        <img class="img-thumbnail" v-bind:src=auction.photoLink border="5">
+                    </div>
                 </div>
             </div>
         </div>
@@ -71,7 +82,7 @@
                 auctions: [],
                 auctionType: "all",
                 auctionSearchString: "",
-                auctionCategoryId: ""
+                auctionCategoryId: "",
             }
         },
 

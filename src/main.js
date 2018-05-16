@@ -1,7 +1,8 @@
 import Vue from "vue";
 import App from "./App.vue";
-import Home from "./Home.vue"
-import Auctions from "./Auctions.vue"
+import Home from "./Home.vue";
+import Auctions from "./Auctions.vue";
+import Auction from "./Auction.vue";
 
 import VueRouter from "vue-router";
 import VueResource from "vue-resource";
@@ -23,7 +24,7 @@ const routes = [
     {
         path: "/auctions/:auctionId",
         name: "auction",
-        component: Auctions
+        component: Auction
     }
 ];
 
