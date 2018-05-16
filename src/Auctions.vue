@@ -108,7 +108,6 @@
                 
                 this.$http.get('http://localhost:4941/api/v1/auctions', {params: params}).then(
                     function (response) {
-                        console.log(response.body);
                         this.auctions = response.data;
                         this.getPhotos();
                     },
@@ -126,7 +125,7 @@
                 }
             },
             getPhotos: function () {
-                for (let i = 0; i <= this.auctions.length; i++) {
+                for (let i = 0; i < this.auctions.length; i++) {
                     this.auctions[i]["photoLink"] = 'http://localhost:4941/api/v1/auctions/' + this.auctions[i].id + "/photos";
                 }
             }

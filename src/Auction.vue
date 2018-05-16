@@ -25,12 +25,22 @@
                         <div v-if="bids.length === 0">
                             <p> No bids yet! </p>
                         </div>
-                        <div v-else v-for="bid in bids" :key="bid.dateTime">
-                            <p> Amount: {{ bid.amount }} </p>
+                        <div v-else >
+                            <table style="width:100%">
+                                <tr>
+                                    <th>$</th>
+                                    <th>Username</th> 
+                                    <th>Time</th>
+                                </tr>
+                                <tr v-for="bid in bids" :key="bid.dateTime">
+                                    <th>{{ bid.amount }}</th>
+                                    <th>{{ bid.buyerUsername }}</th>
+                                    <th>{{ bid.dateString }} {{ bid.timeString }}</th>
+                                </tr>    
+                            </table>
                         </div>
-                        
                     </div>
-                    <div style="float:leftt">
+                    <div id="auction-photo-wrapper-small" style="float:leftt">
                         <img class="img-responsive" v-bind:src=auction.photoLink>
                     </div>
                 </div>
@@ -64,6 +74,19 @@
                         this.auction['startDateString'] = new Date(this.auction.startDateTime).toDateString();
                         this.auction['endDateString'] = new Date(this.auction.endDateTime).toDateString();
                         this.bids = this.auction.bids;
+                        this.bids.sort(function compare(a, b) {
+                            if (a.datetime > b.datetime) {
+                                return -1;
+                            }
+                            if (a.datetime < b.datetime) {
+                                return 1;
+                            }
+                            return 0;
+                        })
+                        for (let i = 0; i < this.bids.length; i++) {
+                            this.bids[i]['dateString'] = new Date(this.bids[i].datetime).toDateString();
+                            this.bids[i]['timeString'] = new Date(this.bids[i].datetime).toTimeString();
+                        }
                         this.seller = this.auction.seller;
                         this.auction["photoLink"] = 'http://localhost:4941/api/v1/auctions/' + this.$route.params.auctionId + "/photos";
                     },

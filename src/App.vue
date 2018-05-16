@@ -20,6 +20,12 @@
   margin: 0 auto;
 }
 
+#auction-photo-wrapper-small {
+  width: 80%;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
 h1,
 h2 {
     font-weight: normal;
