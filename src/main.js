@@ -14,6 +14,7 @@ Vue.http.options.emulateJSON = true;
 const routes = [
     {
         path: "/",
+        name: "home",
         component: Home
     },
     {

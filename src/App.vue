@@ -1,8 +1,19 @@
 <template>
+
     <div id="app">
+        <topnavbar/>
         <router-view></router-view>
     </div>
 </template>
+
+<script>
+    import TopnavbarVue from './Topnavbar.vue';
+    export default {
+        components: {
+            topnavbar: TopnavbarVue
+        }
+    }
+</script>
 
 <style>
 #app {

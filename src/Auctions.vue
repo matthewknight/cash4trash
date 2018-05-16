@@ -20,7 +20,7 @@
                 </thead>
                 <tbody>
                     <tr>
-                    <td><input v-model="auctionSearchString" type="text" placeholder="Search.." v-on:oninput="getAuctions"></td>
+                    <td><input v-model="auctionSearchString" type="text" placeholder="Search.."></td>
                     <td>
                         <select v-model="auctionType" v-on:change="getAuctions">
                             <option disabled>Auction Type</option>
@@ -47,8 +47,8 @@
                 </tbody>
             </table>
             
-            <!-- Search field -->
-            <button type="button" v-on:click=getAuctions>Search</button>
+            <!-- Search field
+            <button type="button" v-on:click=getAuctions>Search</button> -->
 
             <!-- Auction type combo box -->
             
@@ -88,6 +88,12 @@
 
         mounted: function () {
             this.getAuctions();
+        },
+
+        watch: {
+            auctionSearchString: function () {
+                this.getAuctions();
+            }
         },
 
         methods: {
