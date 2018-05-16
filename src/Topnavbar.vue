@@ -3,9 +3,14 @@
         <ul>
             <li><router-link :to="{ name: 'home'}">Home</router-link></li>
             <li><router-link :to="{ name: 'auctions'}">Auctions</router-link></li>
-            <li>
+            <li v-if="!isLoggedOn">
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#registerUser">
                     Register
+                </button>
+            </li>
+            <li v-else>
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#registerUser">
+                    Logout
                 </button>
             </li>
         </ul>
@@ -60,7 +65,7 @@
             return {
                 error: "",
                 errorFlag: false,
-                validRegistration: false,
+                isLoggedOn: false,
                 firstName: "",
                 lastName: "",
                 username: "",
@@ -74,7 +79,6 @@
 
         methods: {
             checkRegistration: function () {
-                this.validRegistration = false;
                 console.log("Navbar: checkRegistration called");
                 // Check first name
                 if (this.firstName == '' || this.firstName == null) {
@@ -113,10 +117,32 @@
                 } else if (!(/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(this.email))) {
                     // Invalid email
                     alert('Please enter a valid email.');
+                    return;
                 }
+                console.log("Navbar: registration passed");
+                this.submitNewUser();
+            },
 
-                console.log("Valid registration");
-
+            submitNewUser: function () {
+                let userData = { 
+                    'username': this.username,
+                    'givenName': this.firstName,
+                    'familyName': this.lastName,
+                    'email': this.email,
+                    'password': this.password 
+                };
+                this.$http.post('http://localhost:4941/api/v1/users', userData).then(
+                    function (response) {
+                        $('#registerUser').modal('hide');
+                        this.isLoggedOn = true;
+                        //TODO logon
+                        alert("Successfully registered");
+                    },
+                    function (error) {
+                        // User must not be unique
+                        alert("User or email must not be unique");
+                    }
+                )
             }
         }
     }
