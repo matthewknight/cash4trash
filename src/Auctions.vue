@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div id="content-wrapper">
         <!-- Error Section -->
         <div v-if="errorFlag" style="color: red;">
             {{ error }}
@@ -20,7 +20,7 @@
                 </thead>
                 <tbody>
                     <tr>
-                    <td><input v-model="auctionSearchString" type="text" placeholder="Search.."></td>
+                    <td></td>
                     <td>
                         <select v-model="auctionType" v-on:change="getAuctions">
                             <option disabled>Auction Type</option>

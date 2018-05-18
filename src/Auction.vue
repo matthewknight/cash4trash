@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div id="content-wrapper">
         <!-- Error Section -->
         <div v-if="errorFlag" style="color: red;">
             {{ error }}

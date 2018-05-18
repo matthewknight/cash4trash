@@ -7,6 +7,9 @@
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#registerUser">
                     Register
                 </button>
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#loginUser">
+                    Login
+                </button>
             </li>
             <li v-else>
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#registerUser">
@@ -14,6 +17,8 @@
                 </button>
             </li>
         </ul>
+
+        <!-- Register Modal -->
         <div class="modal fade" id="registerUser">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
@@ -50,6 +55,44 @@
                     <!-- Modal footer -->
                     <div class="modal-footer">
                         <button type="button" class="btn btn-success" v-on:click="checkRegistration">Register</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Login Form -->
+        <div class="modal fade" id="loginUser">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h4 class="modal-title">cash4trash™ Login</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        <table class="table">
+                            <tbody>
+                                <tr>
+                                <td><input v-model="username" type="text" placeholder="Username"></td>
+                                </tr>
+                                <tr>
+                                <td><input v-model="email" type="email" placeholder="Email"></td>
+                                </tr>
+                                <tr>
+                                <td><input v-model="password" type="password" placeholder="Password"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Modal footer -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" v-on:click="checkRegistration">Login</button>
                         <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
                     </div>
 
