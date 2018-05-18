@@ -1,9 +1,5 @@
 // src/auth/index.js
 
-import {
-    router
-} from '../index'
-
 // URL and endpoint constants
 const API_URL = 'http://localhost:4941/'
 const LOGIN_URL = API_URL + 'api/v1/users/login'
@@ -16,19 +12,14 @@ export default {
     },
 
     // Send a request to the login URL and save the returned JWT
-    login(context, creds, redirect) {
-        context.$http.post(LOGIN_URL, creds, (data) => {
+    login(context, creds) {
+        this.$http.post(LOGIN_URL, creds, (data) => {
             localStorage.setItem('id_token', data.id)
             localStorage.setItem('access_token', data.token)
-
+            alert("Logged in!");
             this.user.authenticated = true
-
-            // Redirect to a specified route
-            if (redirect) {
-                router.go(redirect)
-            }
         }).error((err) => {
-            context.error = err
+            alert("Failed login!");
         })
     },
 

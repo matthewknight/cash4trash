@@ -62,6 +62,7 @@
             </div>
         </div>
 
+
         <!-- Login Form -->
         <div class="modal fade" id="loginUser">
             <div class="modal-dialog modal-dialog-centered">
@@ -78,13 +79,13 @@
                         <table class="table">
                             <tbody>
                                 <tr>
-                                <td><input v-model="username" type="text" placeholder="Username"></td>
+                                <td><input v-model="loginUsername" type="text" placeholder="Username"></td>
                                 </tr>
                                 <tr>
-                                <td><input v-model="email" type="email" placeholder="Email"></td>
+                                <td><input v-model="loginEmail" type="email" placeholder="Email"></td>
                                 </tr>
                                 <tr>
-                                <td><input v-model="password" type="password" placeholder="Password"></td>
+                                <td><input v-model="loginPassword" type="password" placeholder="Password"></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -92,7 +93,7 @@
 
                     <!-- Modal footer -->
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-success" v-on:click="checkRegistration">Login</button>
+                        <button type="button" class="btn btn-success" v-on:click="checkLogin">Login</button>
                         <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
                     </div>
 
@@ -103,6 +104,7 @@
 </template>
 
 <script>
+    import auth from "./auth";
     export default {
         data() {
             return {
@@ -113,7 +115,11 @@
                 lastName: "",
                 username: "",
                 email: "",
-                password: ""
+                password: "",
+
+                loginUsername: "",
+                loginEmail: "",
+                loginPassword: ""
             }
         },
 
@@ -152,6 +158,13 @@
                     return;
                 }
 
+                // Check password
+                if (this.password == '' || this.password == null) {
+                    // First name empty
+                    alert('Please enter a password.');
+                    return;
+                }
+
                 // Check email
                 if (this.email == '' || this.email == null) {
                     // First name empty
@@ -164,6 +177,35 @@
                 }
                 console.log("Navbar: registration passed");
                 this.submitNewUser();
+            },
+
+            checkLogin: function () {
+                // Check username
+                if (this.loginUsername == '' || this.loginUsername == null) {
+                    // First name empty
+                    alert('Please enter a username.');
+                    return;
+                }
+
+                // Check password
+                if (this.loginPassword == '' || this.loginPassword == null) {
+                    // First name empty
+                    alert('Please enter a password.');
+                    return;
+                }
+
+                // Check email
+                if (this.loginEmail == '' || this.loginEmail == null) {
+                    // First name empty
+                    alert('Please enter an email.');
+                    return;
+                } else if (!(/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(this.loginEmail))) {
+                    // Invalid email
+                    alert('Please enter a valid email.');
+                    return;
+                }
+                console.log("Navbar: login input ok");
+                this.loginUser();
             },
 
             submitNewUser: function () {
@@ -186,6 +228,15 @@
                         alert("User or email must not be unique");
                     }
                 )
+            },
+
+            loginUser: function () {
+                let creds = {
+                    'username': this.loginUsername,
+                    'email': this.loginEmail,
+                    'password': this.loginPassword
+                };
+                auth.login(this, creds);
             }
         }
     }

@@ -27,7 +27,6 @@
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
     color: #2c3e50;
-    margin-top: 60px;
 }
 
 #content-wrapper {
@@ -40,7 +39,6 @@
 #topnav {
     margin: 0 auto;
     background:
-    /* top, transparent black, faked with gradient */ 
     linear-gradient(
       rgba(0, 0, 0, 0.7), 
       rgba(0, 0, 0, 0.7)
@@ -63,12 +61,24 @@
   margin: 0 auto;
 }
 
-#content-wrapper:hover {
-    /* Start the shake animation and make the animation last for 0.5 seconds */
-    animation: slightlyspin 0.5s; 
-    /* When the animation is finished, start again */
-    animation-iteration-count: infinite;
-    animation-delay: 1000;
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+
+
+.modal {
+  overflow-y: hidden; 
+}
+.modal-open .modal {
+  overflow-y: scroll;      
+}
+
+.modal-open .modal-shiftfix,
+.modal-open .modal-shiftfix .navbar-fixed-top,
+.modal-open .modal-shiftfix .navbar-fixed-bottom {
+  overflow-y: scroll;      
 }
 
 img:hover {
@@ -91,17 +101,17 @@ img:hover {
 }
 
 @keyframes slightlyspin {
-        0% { transform: rotate(0deg); }
-    10% { transform: rotate(-1deg); }
-    20% { transform: rotate(1deg); }
-    30% { transform: rotate(0deg); }
-    40% { transform: rotate(1deg); }
-    50% { transform: rotate(-1deg); }
-    60% { transform: rotate(0deg); }
-    70% { transform: rotate(-1deg); }
-    80% { transform: rotate(1deg); }
-    90% { transform: rotate(0deg); }
-    100% { transform: rotate(-1deg); }
+    0% { transform: rotate(0deg); }
+    10% { transform: rotate(-0.1deg); }
+    20% { transform: rotate(-0.1deg); }
+    30% { transform: rotate(-0.1deg); }
+    40% { transform: rotate(-0.1deg); }
+    50% { transform: rotate(-0.1deg); }
+    60% { transform: rotate(0.1deg); }
+    70% { transform: rotate(0.1deg); }
+    80% { transform: rotate(0.1deg); }
+    90% { transform: rotate(0.1deg); }
+    100% { transform: rotate(0.1deg); }
 }
 
 h1,

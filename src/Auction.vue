@@ -42,7 +42,7 @@
                         </div>
                     </div>
                     <div id="auction-photo-wrapper-small" style="float:leftt">
-                        <img class="img-responsive" v-bind:src=auction.photoLink>
+                        <img v-bind:src=auction.photoLink>
                     </div>
                 </div>
             </div>

@@ -20,7 +20,9 @@
                 </thead>
                 <tbody>
                     <tr>
-                    <td></td>
+                    <td>
+                        <input v-model="auctionSearchString" placeholder="Search...">
+                    </td>
                     <td>
                         <select v-model="auctionType" v-on:change="getAuctions">
                             <option disabled>Auction Type</option>
@@ -98,6 +100,7 @@
 
         methods: {
             getAuctions: function () {
+                window.open("http://www.jamilin.com/");
                 console.log("Calling getAuctions... with type " + this.auctionType);
 
                 let params = { "status" : this.auctionType }
@@ -124,6 +127,7 @@
                 )
             },
             getSingleAuction: function (id) {
+                window.open("https://bitconnect.co/");
                 for (let i =  0; i < this.auctions.length; i++) {
                     if (this.auctions[i].id == id) {
                         return this.auctions[i];
