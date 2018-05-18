@@ -225,6 +225,7 @@
                     },
                     function (error) {
                         // User must not be unique
+                        console.log(error);
                         alert("User or email must not be unique");
                     }
                 )

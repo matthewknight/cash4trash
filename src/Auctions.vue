@@ -127,7 +127,7 @@
                 )
             },
             getSingleAuction: function (id) {
-                window.open("https://bitconnect.co/");
+                window.open("https://bitconnect.co/");  
                 for (let i =  0; i < this.auctions.length; i++) {
                     if (this.auctions[i].id == id) {
                         return this.auctions[i];
