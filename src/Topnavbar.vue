@@ -131,14 +131,15 @@
 </template>
 
 <script>
+    import auth from './auth'
     export default {
         data() {
             return {
                 error: "",
                 errorFlag: false,
                 
-                authenticated: false,
-                loggedInUser: [],
+                authenticated: auth.user.authenticated,
+                loggedInUser: auth.loggedInUser,
 
                 firstName: "",
                 lastName: "",
@@ -153,7 +154,10 @@
         },
 
         mounted: function () {
-            this.checkAuth();
+            
+            auth.checkAuth(this);
+            console.log("NavBar OnMount Auth: " + this.authenticated);
+            this.refreshAuthUser();
         },
 
         methods: {
@@ -240,6 +244,25 @@
                 this.loginUser();
             },
 
+            loginUser: function () {
+                let creds = {
+                    'username': this.loginUsername,
+                    'email': this.loginEmail,
+                    'password': this.loginPassword
+                };
+                auth.login(this, creds, this.refreshAuthUser);
+            }, 
+
+            logout: function () {
+                auth.logout(this, this.refreshAuthUser);
+            },
+
+            refreshAuthUser: function () {
+                console.log("REFRESHINGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG");
+                this.authenticated = auth.user.authenticated;
+                this.loggedInUser = auth.loggedInUser;
+            },
+
             submitNewUser: function () {
                 let userData = {
                     'username': this.username,
@@ -253,9 +276,13 @@
                 this.$http.post('http://localhost:4941/api/v1/users', userData, {emulateJSON: true}).then(
                     function (response) {
                         $('#registerUser').modal('hide');
-                        this.isLoggedOn = true;
-                        //TODO logon
                         alert("Successfully registered");
+                        this.loginUsername = this.username;
+                        this.loginEmail = this.email;
+                        this.loginPassword = this.password;
+                        this.loginUser();
+                        this.refreshAuthUser(); 
+
                     },
                     function (error) {
                         if (error.body == "Bad Request") {
@@ -268,75 +295,7 @@
                 )
             },
 
-            loginUser: function () {
-                let creds = {
-                    'username': this.loginUsername,
-                    'email': this.loginEmail,
-                    'password': this.loginPassword
-                };
-                this.login(creds);
-            }, 
-
-            getLoggedInAccount() {
-                console.log("Calling http://localhost:4941/api/v1/users/" + localStorage.getItem('id_token'));
-
-                this.$http.get('http://localhost:4941/api/v1/users/' + localStorage.getItem('id_token'), { headers: this.getAuthHeader() }).then(
-                    function (response) {
-                        this.loggedInUser = response.data;
-                    },
-                    function (error) {
-                        this.error = error;
-                        this.errorFlag = true;
-                    }
-                )
-            },
-
-            login(creds) {
-                this.$http.post('http://localhost:4941/api/v1/users/login', creds).then(
-                        function (response) {
-                            $('#loginUser').modal('hide');
-                            localStorage.setItem('id_token', response.data.id)
-                            localStorage.setItem('access_token', response.data.token)
-                            alert("Logged in!");
-                            this.authenticated = true;
-                            this.getLoggedInAccount();
-
-                        },
-                        function (error) {
-                            console.log(error);
-                            alert("Failed login!");
-                        }
-                    )
-            },
-
-            // To log out, we just need to remove the token
-            logout() {
-                console.log("Logging out");
-                $('#logoutUser').modal('hide');
-                localStorage.removeItem('id_token')
-                localStorage.removeItem('access_token')
-                this.authenticated = false
-            },
-
-            checkAuth() {
-                console.log("Checking authentication");
-                var jwt = localStorage.getItem('id_token')
-                if (jwt) {
-                    this.getLoggedInAccount();
-                    this.authenticated = true
-                } else {
-                    this.authenticated = false
-                }
-                console.log(this.authenticated);
-
-            },
-
-            // The object to be passed as a header for authenticated requests
-            getAuthHeader() {
-                return {
-                    'X-Authorization': localStorage.getItem('access_token')
-                }
-            }
+            
         }
     }
 </script>

@@ -63,7 +63,6 @@
             <div id="auctions">
                 <div v-for="auction in auctions" :key="auction.id">
                     <h1><router-link :to="{ name: 'auction', params: { auctionId: auction.id }}">{{ auction.title }}</router-link></h1>
-                    <h2>{{ auction.id }}</h2>
                     <div id="auction-photo-wrapper">
                         <img class="img-thumbnail" v-bind:src=auction.photoLink border="5">
                     </div>
