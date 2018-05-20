@@ -3,7 +3,7 @@
         <ul>
             <li><router-link :to="{ name: 'home'}">Home</router-link></li>
             <li><router-link :to="{ name: 'auctions'}">Auctions</router-link></li>
-            <li v-if="!isLoggedOn">
+            <li v-if="!authenticated">
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#registerUser">
                     Register
                 </button>
@@ -12,9 +12,10 @@
                 </button>
             </li>
             <li v-else>
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#registerUser">
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#logoutUser">
                     Logout
                 </button>
+                <span style="color: white">&#9;Welcome {{ loggedInUser.username }} </span>
             </li>
         </ul>
 
@@ -56,6 +57,32 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-success" v-on:click="checkRegistration">Register</button>
                         <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Logout Modal -->
+        <div class="modal fade" id="logoutUser">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h4 class="modal-title">Logout</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        Are you sure you want to logout?
+                    </div>
+
+                    <!-- Modal footer -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" v-on:click="logout">Logout</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
                     </div>
 
                 </div>
@@ -104,13 +131,15 @@
 </template>
 
 <script>
-    import auth from "./auth";
     export default {
         data() {
             return {
                 error: "",
                 errorFlag: false,
-                isLoggedOn: false,
+                
+                authenticated: false,
+                loggedInUser: [],
+
                 firstName: "",
                 lastName: "",
                 username: "",
@@ -124,6 +153,7 @@
         },
 
         mounted: function () {
+            this.checkAuth();
         },
 
         methods: {
@@ -170,7 +200,7 @@
                     // First name empty
                     alert('Please enter an email.');
                     return;
-                } else if (!(/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(this.email))) {
+                } else if (!(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(this.email))) {
                     // Invalid email
                     alert('Please enter a valid email.');
                     return;
@@ -180,11 +210,17 @@
             },
 
             checkLogin: function () {
+                let useEmailLogin = false;
                 // Check username
-                if (this.loginUsername == '' || this.loginUsername == null) {
+                if ((this.loginUsername == '' || this.loginUsername == null) && (this.loginEmail == '' || this.loginEmail == null)) {
                     // First name empty
-                    alert('Please enter a username.');
+                    alert('Please enter a username or email.');
                     return;
+                }
+
+                if (this.loginUsername == '' || this.loginUsername == null) {
+                    // Using email to login
+                    useEmailLogin = true;
                 }
 
                 // Check password
@@ -195,11 +231,7 @@
                 }
 
                 // Check email
-                if (this.loginEmail == '' || this.loginEmail == null) {
-                    // First name empty
-                    alert('Please enter an email.');
-                    return;
-                } else if (!(/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(this.loginEmail))) {
+                if (!(this.loginEmail == '' || this.loginEmail == null) && !(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(this.loginEmail))) {
                     // Invalid email
                     alert('Please enter a valid email.');
                     return;
@@ -209,14 +241,16 @@
             },
 
             submitNewUser: function () {
-                let userData = { 
+                let userData = {
                     'username': this.username,
-                    'givenName': this.firstName,
-                    'familyName': this.lastName,
                     'email': this.email,
-                    'password': this.password 
+                    'password': this.password,
+                    'givenName': this.firstName,
+                    'familyName': this.lastName
                 };
-                this.$http.post('http://localhost:4941/api/v1/users', userData).then(
+            
+                console.log(userData);
+                this.$http.post('http://localhost:4941/api/v1/users', userData, {emulateJSON: true}).then(
                     function (response) {
                         $('#registerUser').modal('hide');
                         this.isLoggedOn = true;
@@ -224,9 +258,12 @@
                         alert("Successfully registered");
                     },
                     function (error) {
-                        // User must not be unique
-                        console.log(error);
-                        alert("User or email must not be unique");
+                        if (error.body == "Bad Request") {
+                            alert("User or email must not be unique");
+                        } else {
+                            alert("Error creating account");
+                             console.log(error);
+                        }
                     }
                 )
             },
@@ -237,7 +274,68 @@
                     'email': this.loginEmail,
                     'password': this.loginPassword
                 };
-                auth.login(this, creds);
+                this.login(creds);
+            }, 
+
+            getLoggedInAccount() {
+                console.log("Calling http://localhost:4941/api/v1/users/" + localStorage.getItem('id_token'));
+
+                this.$http.get('http://localhost:4941/api/v1/users/' + localStorage.getItem('id_token'), { headers: this.getAuthHeader() }).then(
+                    function (response) {
+                        this.loggedInUser = response.data;
+                    },
+                    function (error) {
+                        this.error = error;
+                        this.errorFlag = true;
+                    }
+                )
+            },
+
+            login(creds) {
+                this.$http.post('http://localhost:4941/api/v1/users/login', creds).then(
+                        function (response) {
+                            $('#loginUser').modal('hide');
+                            localStorage.setItem('id_token', response.data.id)
+                            localStorage.setItem('access_token', response.data.token)
+                            alert("Logged in!");
+                            this.authenticated = true;
+                            this.getLoggedInAccount();
+
+                        },
+                        function (error) {
+                            console.log(error);
+                            alert("Failed login!");
+                        }
+                    )
+            },
+
+            // To log out, we just need to remove the token
+            logout() {
+                console.log("Logging out");
+                $('#logoutUser').modal('hide');
+                localStorage.removeItem('id_token')
+                localStorage.removeItem('access_token')
+                this.authenticated = false
+            },
+
+            checkAuth() {
+                console.log("Checking authentication");
+                var jwt = localStorage.getItem('id_token')
+                if (jwt) {
+                    this.getLoggedInAccount();
+                    this.authenticated = true
+                } else {
+                    this.authenticated = false
+                }
+                console.log(this.authenticated);
+
+            },
+
+            // The object to be passed as a header for authenticated requests
+            getAuthHeader() {
+                return {
+                    'X-Authorization': localStorage.getItem('access_token')
+                }
             }
         }
     }
