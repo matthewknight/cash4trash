@@ -16,13 +16,15 @@
 </script>
 
 <style>
+
+
 #app {
     background: url('assets/landfill.jpg');
     background-repeat:no-repeat;
     background-size: cover;
     background-position: center center;
     background-attachment: fixed;
-    font-family: "Avenir", Helvetica, Arial, sans-serif;
+    font-family: 'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
@@ -39,12 +41,7 @@
 #topnav {
     margin: 0 auto;
     background:
-    linear-gradient(
-      rgba(0, 0, 0, 0.7), 
-      rgba(0, 0, 0, 0.7)
-    ),
-    /* bottom, image */
-    url('assets/trash.jpg');
+    url('https://media.giphy.com/media/VTxmwaCEwSlZm/200w_d.gif');
     padding: 5px;
     vertical-align: middle;
 }
