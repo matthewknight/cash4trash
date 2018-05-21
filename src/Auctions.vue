@@ -45,7 +45,6 @@
                         </select>
                     </td>
                     </tr>
-                    
                 </tbody>
             </table>
             
@@ -56,8 +55,51 @@
             
 
             <!-- Auction category combo box -->
-            <br/><br/>
-            <span>Selected: {{ auctionType }} Count: {{ auctions.length }} SearchStr: {{ auctionSearchString }}</span>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createAuction">
+                Create Auction
+            </button>
+
+            <!-- Register Modal -->
+            <div class="modal fade" id="createAuction">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+
+                        <!-- Modal Header -->
+                        <div class="modal-header">
+                            <h4 class="modal-title">cash4trash™ <i>Signature Edition</i> Auction</h4>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+
+                        <!-- Modal body -->
+                        <div class="modal-body">
+                            <table class="table">
+                                <tbody>
+                                    <tr>
+                                    <td><input v-model="createAuction.title" type="text" placeholder="Title"></td>
+                                    </tr>
+                                    <tr>
+                                    <td><input v-model="createAuction.startDate" type="date" placeholder="Start Date"></td>
+                                    </tr>
+                                    <tr>
+                                    <td><input v-model="createAuction.description" type="text" placeholder="Description"></td>
+                                    </tr>
+                                    <tr>
+                                    <td><input v-model="createAuction.categoryId" type="number" placeholder="Category ID"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Modal footer -->
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-success" >Register</button>
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
             <br/><br/>
             <!-- All auctions table -->
             <div id="auctions">
@@ -84,6 +126,13 @@
                 auctionType: "all",
                 auctionSearchString: "",
                 auctionCategoryId: "",
+
+                createAuction: {
+                    title: "",
+                    startDate: "",
+                    description: "",
+                    categoryId: 0
+                }
             }
         },
 
