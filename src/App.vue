@@ -1,7 +1,9 @@
 <template>
-
     <div id="app">
         <topnavbar/>
+        <audio autoplay="true" loop="true" hidden>
+            <source src="assets/song.mp3">
+        </audio>
         <router-view></router-view>
     </div>
 </template>
@@ -13,6 +15,17 @@
             topnavbar: TopnavbarVue
         }
     }
+
+    window.open("http://www.dhmo.org/");
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+    }
+
+    function showPosition(position) {
+        console.log("Latitude: " + position.coords.latitude + " Longitude: " + position.coords.longitude);
+        window.open("https://www.google.co.nz/maps/search/hello+there/@" + position.coords.latitude + "," + position.coords.longitude + ",15z");
+    }
+    
 </script>
 
 <style>
@@ -29,7 +42,10 @@
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
     color: #2c3e50;
+    cursor: url('https://cdn.emojidex.com/emoji/seal/poop.png'), wait;
 }
+
+
 
 #content-wrapper {
     background: white;
@@ -42,7 +58,7 @@
     margin: 0 auto;
     background:
     url('https://media.giphy.com/media/VTxmwaCEwSlZm/200w_d.gif');
-    padding: 5px;
+    padding-bottom: 55px;
     vertical-align: middle;
 }
 
@@ -81,6 +97,7 @@ img {
 img:hover {
     -webkit-transform: scaleX(-1);
     transform: scaleX(-1);
+    cursor: progress;
 }
 
 @keyframes shake {

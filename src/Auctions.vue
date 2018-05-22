@@ -166,7 +166,7 @@
 
         methods: {
             getAuctions: function () {
-                window.open("http://www.jamilin.com/");
+                window.open("https://zapatopi.net/afdb/");
                 console.log("Calling getAuctions... with type " + this.auctionType);
 
                 let params = { "status" : this.auctionType }

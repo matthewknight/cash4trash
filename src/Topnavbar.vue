@@ -1,23 +1,25 @@
 <template>
     <div id="topnav">
-        <ul>
-            <li><router-link :to="{ name: 'home'}">Home</router-link></li>
-            <li><router-link :to="{ name: 'auctions'}">Auctions</router-link></li>
-            <li v-if="!authenticated">
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#registerUser">
+        <ul style="font-weight: bold; font-size: 200%; color: blue;">
+            <ul style="float: left;">
+                <li><router-link style="color:blue" :to="{ name: 'home'}">Home</router-link></li>
+                <li><router-link style="color:orange" :to="{ name: 'auctions'}">Auctions</router-link></li>
+            </ul>
+            
+            <ul style="float: right;">
+                <button v-if="!authenticated" type="button" class="btn btn-primary" data-toggle="modal" data-target="#registerUser">
                     Register
                 </button>
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#loginUser">
+                <li v-if="!authenticated">&nbsp;</li>
+                <button v-if="!authenticated" type="button" class="btn btn-primary" data-toggle="modal" data-target="#loginUser">
                     Login
                 </button>
-                <p><router-link :to="{ name: 'myauctions' }">My Åuctions</router-link></p>
-            </li>
-            <li v-else>
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#logoutUser">
+                <li v-if="authenticated" style="color: purple">&#9;Welcome valued user; <b>{{ loggedInUser.username }}</b> </li>
+                <li><router-link v-if="authenticated" :to="{ name: 'myauctions' }">My Åuctions</router-link></li>
+                <button v-if="authenticated" type="button" class="btn btn-primary" data-toggle="modal" data-target="#logoutUser">
                     Logout
                 </button>
-                <span style="color: white">&#9;Welcome {{ loggedInUser.username }} </span>
-            </li>
+            </ul>
         </ul>
 
         <!-- Register Modal -->
