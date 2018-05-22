@@ -10,6 +10,7 @@
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#loginUser">
                     Login
                 </button>
+                <p><router-link :to="{ name: 'myauctions' }">My Åuctions</router-link></p>
             </li>
             <li v-else>
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#logoutUser">

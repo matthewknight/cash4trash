@@ -55,7 +55,7 @@
             
 
             <!-- Auction category combo box -->
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createAuction">
+            <button type="button" class="btn btn-primary" v-on:click="checkOpenCreateAuctionModal">
                 Create Auction
             </button>
 
@@ -78,19 +78,28 @@
                                     <td><input v-model="createAuction.title" type="text" placeholder="Title"></td>
                                     </tr>
                                     <tr>
-                                    <td>Start Date<input v-model="createAuction.startDate" type="date"></td>
+                                    <td>Start Date<input v-model="createAuction.startDate" type="datetime-local"></td>
                                     </tr>
                                     <tr>
-                                    <td>End Date<input v-model="createAuction.endDate" type="date"></td>
+                                    <td>End Date<input v-model="createAuction.endDate" type="datetime-local"></td>
                                     </tr>
                                     <tr>
                                     <td><input v-model="createAuction.description" type="text" placeholder="Description"></td>
                                     </tr>
                                     <tr>
-                                    <td><input v-model="createAuction.categoryId" type="number" placeholder="Category ID"></td>
+                                    <td>
+                                        <select v-model.number="createAuction.categoryId">
+                                            <option disabled>Auction Category</option>
+                                            <option selected value=1>Apparel</option>
+                                            <option value=2>Equipment</option>
+                                            <option value=3>Vehicles</option>
+                                            <option value=4>Property</option>
+                                            <option value=5>Other</option>
+                                        </select>
+                                    </td>
                                     </tr>
                                     <tr>
-                                        <td> <input type="file" name="pic" accept="image/*" @change="onFileChanged"> </td>
+                                        <td><i>ĩtem</i> photo&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="file" name="pic" accept="image/png, image/jpeg" @change="onFileChanged"> </td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -98,7 +107,7 @@
 
                         <!-- Modal footer -->
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-success" v-on:click="checkCreateAuction">Register</button>
+                            <button type="button" class="btn btn-success" v-on:click="checkCreateAuction">Create</button>
                             <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
                         </div>
 
@@ -139,7 +148,7 @@
                     startDate: "",
                     endDate: "",
                     description: "",
-                    categoryId: 0,
+                    categoryId: 1,
                     selectedFile: null,
                 }
             }
@@ -190,8 +199,20 @@
                 }
             },
 
+            checkOpenCreateAuctionModal: function () {
+                auth.checkAuth(this);
+                if (!auth.user.authenticated) {
+                    alert("Please login/register to create an auction");
+                } else {
+                    $('#createAuction').modal('show');
+                }
+            },
+
             checkCreateAuction: function () {
                 console.log("Auctions: checking validity of new auction")
+                this.createAuction['startDateUnix'] = new Date(this.createAuction.startDate).getTime();
+                this.createAuction['endDateUnix'] = new Date(this.createAuction.endDate).getTime();
+
                 // Check auction title
                 if (this.createAuction.title == '' || this.createAuction.title == null) {
                     alert('Please enter an auction title');
@@ -207,6 +228,12 @@
                 if (this.createAuction.startDate == '' || this.createAuction.startDate == null) {
                     alert('Please enter an auction start date');
                     return;
+                } else if (this.createAuction.startDateUnix < new Date(Date.now())) {
+                    alert('Start datetime is before now');
+                    return;
+                } else if (this.createAuction.startDateUnix >= this.createAuction.endDateUnix) {
+                    alert('Auction start date is after end date');
+                    return;
                 }
 
                 if (this.createAuction.categoryId == '' || this.createAuction.categoryId == null) {
@@ -218,24 +245,30 @@
             },
 
             submitNewAuction: function () {
+                console.log("Raw start date: " + this.createAuction.startDate)
+                console.log("Raw end date: " + this.createAuction.endDate)
+                console.log("Conv start date: " + new Date(this.createAuction.startDate).getTime())
+                console.log("Conv end date: " + new Date(this.createAuction.endDate).getTime())
+
                 let auctionData = {
-                        'categoryId': 2,
+                        'categoryId': this.createAuction.categoryId,
                         'title': this.createAuction.title,
                         'description': this.createAuction.description,
                         'startDateTime': new Date(this.createAuction.startDate).getTime(),
-                        'endDateTime': new Date(this.createAuction.startDate).getTime(),
+                        'endDateTime': new Date(this.createAuction.endDate).getTime(),
                         'reservePrice': 100,
                         'startingBid': 10
                     }
                 console.log("Auctions: submitting new auction");
                 this.$http.post(
                     'http://localhost:4941/api/v1/auctions', 
-                    auctionData, { 
-                                   emulateJSON: true, headers: auth.getAuthHeader() }
+                    auctionData, {headers: auth.getAuthHeaderSetJSON()}
                 ).then(response => {
                     // get body data
                     alert("Successfully created auction");
                     this.getAuctions();
+                    this.uploadPhoto(response.data.id);
+                    console.log("GOT ID FROM RESPONSE: " + response.data.id );
                 }, error => {
                     // error callback
                     alert("Failed to create auction");
@@ -244,22 +277,26 @@
                 
             },
             
-            uploadPhoto() {
-            // upload file, get it from this.selectedFile
+            uploadPhoto(id) {
+                console.log("UPLOADING NEW PHOTO... of type " + this.createAuction.selectedFile.type)
+                let headerConfig = {}
+                if (this.createAuction.selectedFile.type === 'image/png') {
+                    headerConfig = { headers: auth.getAuthHeaderSetPNG() }
+                } else if (this.createAuction.selectedFile.type === 'image/jpeg') {
+                    headerConfig = { headers: auth.getAuthHeaderSetJPEG() }
+                } else {
+                    alert("Failed to upload photo, invalid format");
+                    return;
+                }
+
                 this.$http.post(
-                    'http://localhost:4941/api/v1/auctions/6/photos', 
-                    this.createAuction.selectedFile, 
-                    {
-                    headers: {
-                        "X-Authorization": "token",
-                        "Content-Type": "image/jpeg"
-                    }
-                }).then(response => {
+                    'http://localhost:4941/api/v1/auctions/' + id + '/photos',
+                    this.createAuction.selectedFile, headerConfig).then(response => {
                     // get body data
-                    console.log("success")
-                }, response => {
+                    console.log("added photo")
+                }, error => {
                     // error callback
-                    console.log("error")
+                    console.log("error adding photo: " + error);
                 });
             },
 

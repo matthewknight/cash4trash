@@ -83,6 +83,27 @@ export default {
         return {
             'X-Authorization': localStorage.getItem('access_token')
         }
+    },
+
+    getAuthHeaderSetJSON() {
+        return {
+            'X-Authorization': localStorage.getItem('access_token'),
+            'Content-Type': 'application/json'
+        }
+    },
+
+    getAuthHeaderSetPNG() {
+        return {
+            'X-Authorization': localStorage.getItem('access_token'),
+            "Content-Type": "image/png"
+        }
+    },
+
+    getAuthHeaderSetJPEG() {
+        return {
+            'X-Authorization': localStorage.getItem('access_token'),
+            "Content-Type": "image/jpeg"
+        }
     }
 
 

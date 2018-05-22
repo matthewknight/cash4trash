@@ -16,6 +16,7 @@
                 <br/><br/>
                 <h1>{{ auction.title }}</h1>
                 <span>Start Date: {{ auction.startDateString }} End Date: {{ auction.endDateString }}</span>
+                <p id="demo"></p>
                 <br/><br/>
                 <h3>Seller Username: {{ seller.username }}</h3>
                 <h3>Seller ID: {{ seller.id }}</h3>
