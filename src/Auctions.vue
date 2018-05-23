@@ -240,11 +240,6 @@
             },
 
             submitNewAuction: function () {
-                console.log("Raw start date: " + this.createAuction.startDate)
-                console.log("Raw end date: " + this.createAuction.endDate)
-                console.log("Conv start date: " + new Date(this.createAuction.startDate).getTime())
-                console.log("Conv end date: " + new Date(this.createAuction.endDate).getTime())
-
                 let auctionData = {
                         'categoryId': this.createAuction.categoryId,
                         'title': this.createAuction.title,

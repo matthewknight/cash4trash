@@ -211,10 +211,17 @@
                         }
 
                         this.editAuction.title = this.auction.title;
-                        console.log("Auction start date: " + this.auction.startDateTime);
-                        console.log("Auction end date: " + this.auction.endDateTime);
-                        this.editAuction.startDate = new Date(this.auction.startDateTime).toDateString("yyyy-MM-ddThh:mm");
-                        this.editAuction.endDate = new Date(this.auction.endDateTime).toDateString("yyyy-MM-ddThh:mm");  
+
+                        let startISOdate = new Date(this.auction.startDateTime).toISOString();
+                        let startConvDate = startISOdate.substring(0, startISOdate.length - 5);
+
+                        let endISOdate = new Date(this.auction.endDateTime).toISOString();
+                        let endConvDate = endISOdate.substring(0, endISOdate.length - 5);
+
+
+
+                        this.editAuction.startDate = startConvDate;
+                        this.editAuction.endDate = endConvDate;
                         this.editAuction.categoryId = this.auction.categoryId;
                         this.editAuction.description = this.auction.description;
 
@@ -320,6 +327,22 @@
 
             removePhoto: function () {
                 console.log("Remove photo called");
+                let headerConfig = { headers: auth.getAuthHeader() }
+                this.$http.delete(
+                    'http://localhost:4941/api/v1/auctions/' + this.$route.params.auctionId + '/photos', headerConfig)
+                .then(response => { 
+                    // get body data
+                    console.log("Deleted photo")
+                    location.reload();
+                    done();
+                }, error => {
+                    if (error.status === 500) {
+                        alert("No photo to delete");
+                    } else {
+                        console.log(error);
+                    }
+                });         
+
             },
 
             checkBid: function () {
