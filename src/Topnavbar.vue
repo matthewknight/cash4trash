@@ -141,8 +141,8 @@
                 error: "",
                 errorFlag: false,
                 
-                authenticated: auth.user.authenticated,
-                loggedInUser: auth.loggedInUser,
+                authenticated: false,
+                loggedInUser: {},
 
                 firstName: "",
                 lastName: "",
@@ -157,10 +157,7 @@
         },
 
         mounted: function () {
-            
-            auth.checkAuth(this);
-            console.log("NavBar OnMount Auth: " + this.authenticated);
-            this.refreshAuthUser();
+            auth.checkAuth(this, this.refreshAuthUser);
         },
 
         methods: {
@@ -262,6 +259,7 @@
 
             refreshAuthUser: function () {
                 console.log("REFRESHINGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG");
+                console.log("refreshAuthUser: found " + auth.loggedInUser.username);
                 this.authenticated = auth.user.authenticated;
                 this.loggedInUser = auth.loggedInUser;
             },

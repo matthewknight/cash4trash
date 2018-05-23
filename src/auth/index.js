@@ -12,18 +12,19 @@ export default {
     user: {
         authenticated: false
     },
-
+    
     loggedInUser: {},
 
-    getLoggedInAccount(context) {
+    getLoggedInAccount(context, done = function() {}) {
         console.log("Calling http://localhost:4941/api/v1/users/" + localStorage.getItem('id_token'));
 
         context.$http.get('http://localhost:4941/api/v1/users/' + localStorage.getItem('id_token'), { headers: this.getAuthHeader() }).then(
-            function (response) {
+            response => {
                 this.loggedInUser = response.data;
-                console.log(this.loggedInUser);
-            },
-            function (error) {
+                this.loggedInUser['id'] = localStorage.getItem('id_token');
+                console.log("getLoggedInAccount: found " + this.loggedInUser.username);
+                done();
+            }, error => {
                 alert("Failed to get current logged in account");
             }
         )
@@ -37,7 +38,7 @@ export default {
                 console.log(this.user);
                 this.user.authenticated = true;
                 console.log("Auth: Setting Auth = true");
-                this.getLoggedInAccount(context);
+                this.getLoggedInAccount(context, );
                 done();
             }, error => {
                 console.log(error);
@@ -65,13 +66,13 @@ export default {
         )
     },
 
-    checkAuth(context) {
+    checkAuth(context, done) {
         console.log("Checking authentication");
         var jwt = localStorage.getItem('id_token')
         if (jwt) {
-            this.getLoggedInAccount(context);
-            this.user.authenticated = true
-            console.log("Auth: Setting Auth = true");
+            this.getLoggedInAccount(context, done);
+            this.user.authenticated = true 
+            console.log("Auth: Setting Auth = true with username " + this.loggedInUser.username);
         } else {
             this.user.authenticated = false
             console.log("Auth: Setting Auth = false");

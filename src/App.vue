@@ -1,9 +1,9 @@
 <template>
     <div id="app">
         <topnavbar/>
-        <audio autoplay="true" loop="true" hidden>
+        <!-- <audio autoplay="true" loop="true" hidden>
             <source src="assets/song.mp3">
-        </audio>
+        </audio> -->
         <router-view></router-view>
     </div>
 </template>

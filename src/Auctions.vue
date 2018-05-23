@@ -235,11 +235,6 @@
                     alert('Auction start date is after end date');
                     return;
                 }
-
-                if (this.createAuction.categoryId == '' || this.createAuction.categoryId == null) {
-                    alert('Please enter an auction start date');
-                    return;
-                }
                 console.log("Auctions: new auction valid");
                 this.submitNewAuction();
             },

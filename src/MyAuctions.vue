@@ -7,10 +7,18 @@
 
         <div>
             <!-- Banner -->
-            <img src="./assets/singleAuctionBanner.png">
-            <br/><br/>
+            <img src="./assets/myauctionsBanner.png">
 
-            
+            <br/><br/>
+            <!-- All auctions table -->
+            <div id="auctions">
+                <div v-for="auction in auctions" :key="auction.id">
+                    <h1><router-link :to="{ name: 'auction', params: { auctionId: auction.id }}">{{ auction.title }}</router-link></h1>
+                    <div id="auction-photo-wrapper">
+                        <img class="img-thumbnail" v-bind:src=auction.photoLink border="5">
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -22,14 +30,39 @@
             return {
                 error: "",
                 errorFlag: false,
-                
+                currentUser: [],
+                auctions: []
             }
         },
 
         mounted: function () {
+            auth.getLoggedInAccount(this, this.getAuctions);
         },
 
         methods: {
+            getAuctions: function () {
+                this.currentUser = auth.loggedInUser;
+                console.log("Calling getAuctions... with id " + this.currentUser.id);
+
+                let params = { "seller" : this.currentUser.id };
+                
+                this.$http.get('http://localhost:4941/api/v1/auctions', {params: params}).then(
+                    function (response) {
+                        this.auctions = response.data;
+                        this.getPhotos();
+                    },
+                    function (error) {
+                        this.error = error;
+                        this.errorFlag = true;
+                    }
+                )
+            },
+
+            getPhotos: function () {
+                for (let i = 0; i < this.auctions.length; i++) {
+                    this.auctions[i]["photoLink"] = 'http://localhost:4941/api/v1/auctions/' + this.auctions[i].id + "/photos";
+                }
+            },
         }
     }
 </script>
