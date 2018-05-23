@@ -7,7 +7,7 @@
 
         <div>
             <!-- Banner -->
-            <img src="./assets/myauctionsBanner.png">
+            <img src="./assets/mybidsBanner.png">
 
             <br/><br/>
             <!-- All auctions table -->
@@ -23,7 +23,7 @@
     </div>
 </template>
 
-<script>
+<script>    
     import auth from './auth'
     export default {
         data() {
@@ -36,6 +36,7 @@
         },
 
         mounted: function () {
+            
             auth.getLoggedInAccount(this, this.getAuctions);
         },
 
@@ -45,7 +46,7 @@
                 this.currentUser = auth.loggedInUser;
                 console.log("Calling getAuctions... with id " + this.currentUser.id);
 
-                let params = { "seller" : this.currentUser.id };
+                let params = { "bidder" : this.currentUser.id };
                 
                 this.$http.get('http://localhost:4941/api/v1/auctions', {params: params}).then(
                     function (response) {

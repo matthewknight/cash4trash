@@ -15,12 +15,35 @@
                     Login
                 </button>
                 <li v-if="authenticated" style="color: purple">&#9;Welcome valued user; <b>{{ loggedInUser.username }}</b> </li>
-                <li><router-link v-if="authenticated" :to="{ name: 'myauctions' }">My Åuctions</router-link></li>
+                <li></li>
                 <button v-if="authenticated" type="button" class="btn btn-primary" data-toggle="modal" data-target="#logoutUser">
                     Logout
                 </button>
+                <button v-if="authenticated" type="button" class="btn btn-primary" data-toggle="modal" data-target="#redirectUser">
+                    User Links
+                </button>
             </ul>
         </ul>
+
+        <!-- User Modal -->
+        <div class="modal fade" id="redirectUser">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h4 class="modal-title">cash4trash™ <b>User</b> <i>Management™</i> System®</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        <ul>
+                            <li><router-link :to="{ name: 'myauctions' }">My Åuctions</router-link></li>
+                            <li><router-link :to="{ name: 'myauctionsbids' }">My WiƝƝing Bids</router-link></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- Register Modal -->
         <div class="modal fade" id="registerUser">
