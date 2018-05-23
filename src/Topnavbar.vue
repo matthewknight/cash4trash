@@ -31,14 +31,16 @@
                 <div class="modal-content">
                     <!-- Modal Header -->
                     <div class="modal-header">
-                        <h4 class="modal-title">cash4trash™ <b>User</b> <i>Management™</i> System®</h4>
+                        <h4 class="modal-title">cash4trash™ <b>User</b> Management™ System® <i>ProPlus xTREME 360Nav Edition</i></h4>
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
                     <!-- Modal body -->
                     <div class="modal-body">
                         <ul>
                             <li><router-link :to="{ name: 'myauctions' }">My Åuctions</router-link></li>
-                            <li><router-link :to="{ name: 'myauctionsbids' }">My WiƝƝing Bids</router-link></li>
+                            <li><router-link :to="{ name: 'myauctionsbids' }">My Bid on Auctions</router-link></li>
+                            <li><router-link :to="{ name: 'myauctionsbids' }">My Winning Bids on Auctions</router-link></li>
+                            <li><router-link :to="{ name: 'user', params: { userId: loggedInUser.id }}">Ma profile :3</router-link></li>
                         </ul>
                     </div>
                 </div>

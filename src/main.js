@@ -5,6 +5,7 @@ import Auctions from "./Auctions.vue";
 import Auction from "./Auction.vue";
 import MyAuctions from "./MyAuctions.vue";
 import MyBids from "./MyBids.vue";
+import User from "./User.vue";
 
 import VueRouter from "vue-router";
 import VueResource from "vue-resource";
@@ -37,6 +38,11 @@ const routes = [
         path: "/trashinwhichihavepromisedmoneyfor",
         name: "myauctionsbids",
         component: MyBids
+    },
+    {
+        path: "/trashtrader/:userId",
+        name: "user",
+        component: User
     }
 ];
 
