@@ -24,6 +24,11 @@
 </template>
 
 <script>
+
+    import {
+        router
+    } from './main.js'
+
     import auth from './auth'
     export default {
         data() {
@@ -37,22 +42,27 @@
         },
 
         mounted: function () {
-            auth.getLoggedInAccount(this, this.getUser);
+            auth.checkAuth(this, this.getUser);
         },
 
         methods: {
             getUser: function () {
-                $('#redirectUser').modal('hide');
+                if (auth.loggedInUser.id === this.$route.params.userId) {
+                    console.log("Owns account");
+                    this.ownsAccount = true;
+                }
                 this.$http.get('http://localhost:4941/api/v1/users/' + this.$route.params.userId, { headers: auth.getAuthHeader() }).then(
                     response => {
                         this.currentUser = response.data;
-                        if (response.data.accountBalance !== undefined) {
-                            //Logged in owns this account
-                            this.ownsAccount = true;
-                        }
                     }, error => {
-                        alert("Failed to get user");
-                        console.log(error);
+                        if (error.status === 401) {
+                            alert("Login/register to see user details");
+                            router.go(-1);
+                        } else {
+                            alert("Failed to get user");
+                            console.log(error);
+                        }
+                        
                     }
                 )
             },

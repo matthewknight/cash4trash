@@ -23,13 +23,13 @@
 
 
                 <br/><br/>
-                <h3>Seller Username: <router-link :to="{ name: 'user', params: { userId: seller.id }}">{{ seller.username }}</router-link></h3>
+                <h3>Seller Username: <router-link :to="{ name: 'user', params: { userId: Number(seller.id) }}">{{ seller.username }}</router-link></h3>
                 <h3>Seller ID: {{ seller.id }}</h3>
                 <p>{{ auction.description }}</p>
                 <div style="margin:auto">
                     <div style="float:left">
                         <h4> Bids </h4>
-                        <button v-if="!ownsAuction" type="button" class="btn btn-primary" data-toggle="modal" data-target="#makeBid">Place bid</button>
+                        <button v-if="!ownsAuction && authenticated" type="button" class="btn btn-primary" data-toggle="modal" data-target="#makeBid">Place bid</button>
                         <div v-if="bids.length === 0">
                             <p> No bids yet! </p>
                         </div>
@@ -42,7 +42,7 @@
                                 </tr>
                                 <tr v-for="bid in bids" :key="bid.dateTime">
                                     <th>{{ bid.amount }}</th>
-                                    <th><router-link :to="{ name: 'user', params: { userId: bid.buyerId }}">{{ bid.buyerUsername }}</router-link></th>
+                                    <th><router-link :to="{ name: 'user', params: { userId: Number(bid.buyerId) }}">{{ bid.buyerUsername }}</router-link></th>
                                     <th>{{ bid.dateString }} {{ bid.timeString }}</th>
                                 </tr>    
                             </table>
@@ -62,7 +62,7 @@
                                     <!-- Modal body -->
                                     <div class="modal-body">
                                         Minimum bid: $
-                                        <input style="width: 70px" v-model="placedBidAmount" type="number" v-bind:placeholder="currentBestBid.amount + 1"> 
+                                        <input style="width: 70px" v-model="placedBidAmount" type="number">
                                     </div>
 
                                     <!-- Modal footer -->
@@ -123,6 +123,12 @@
                                 </td>
                                 </tr>
                                 <tr>
+                                <td>Reserve Price $<input v-model="editAuction.reservePrice" type="number"></td>
+                                </tr>
+                                <tr>
+                                <td>Starting Bid $<input v-model="editAuction.startingBid" type="number"></td>
+                                </tr>
+                                <tr>
                                     <td><i>ĩtem</i> photo&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="file" name="pic" accept="image/png, image/jpeg" @change="onFileChanged"> </td>
                                 </tr>
                             </tbody>
@@ -132,8 +138,8 @@
                     <!-- Modal footer -->
                     <div class="modal-footer">
                         <button style="float: left" type="button" class="btn btn-danger" v-on:click="removePhoto">Remove Photo</button>
-                        <button type="button" class="btn btn-success" v-on:click="checkEditAuction">Create</button>
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-success" v-on:click="checkEditAuction">Update</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
                     </div>
 
                 </div>
@@ -156,6 +162,7 @@
                 currentBestBid: [],
                 ownsAuction: false,
                 auctionStarted: false,
+                authenticated: false,
 
                 editAuction: {
                     title: "",
@@ -163,6 +170,8 @@
                     endDate: "",
                     description: "",
                     categoryId: 1,
+                    reservePrice: 0,
+                    startingBid: 0,
                     selectedFile: null,
                 }
             }
@@ -174,6 +183,7 @@
 
         methods: {
             getAuction: function () {
+                this.authenticated = auth.user.authenticated;
                 console.log("Auction.vue: Calling getAuction");
                 this.$http.get('http://localhost:4941/api/v1/auctions/' + this.$route.params.auctionId).then(
                     function (response) {
@@ -191,11 +201,15 @@
                             return 0;
                         })
                         if (this.bids.length === 0) {
-                            this.currentBestBid.amount = 0;
+                            this.currentBestBid.amount = this.auction.startingBid;
                         } else {
                             this.auctionStarted = true;
-                            this.currentBestBid = this.bids[0];
+                            console.log("Current best bid " + this.auction.currentBid);
+                            this.currentBestBid.amount = this.auction.currentBid + 1;
                         }
+
+
+                        this.placedBidAmount = this.currentBestBid.amount;
                         
                         for (let i = 0; i < this.bids.length; i++) {
                             this.bids[i]['dateString'] = new Date(this.bids[i].datetime).toDateString();
@@ -224,6 +238,8 @@
                         this.editAuction.endDate = endConvDate;
                         this.editAuction.categoryId = this.auction.categoryId;
                         this.editAuction.description = this.auction.description;
+                        this.editAuction.startingBid = this.auction.startingBid;
+                        this.editAuction.reservePrice = this.auction.reservePrice;
 
                         this.auction["photoLink"] = 'http://localhost:4941/api/v1/auctions/' + this.$route.params.auctionId + "/photos";
                     },
@@ -262,6 +278,18 @@
                     return;
                 }
 
+                if (this.editAuction.reservePrice < 1) {
+                    alert('Reserve price too low');
+                    this.editAuction.reservePrice = 1;
+                    return;
+                }
+
+                if (this.editAuction.startingBid < 1) {
+                    alert('Starting bid too low');
+                    this.editAuction.startingBid = 1;
+                    return;
+                }
+
                 console.log("Auctions: new auction valid");
                 this.pushEditAuction();
             },
@@ -275,8 +303,8 @@
                         'description': this.editAuction.description,
                         'startDateTime': new Date(this.editAuction.startDate).getTime(),
                         'endDateTime': new Date(this.editAuction.endDate).getTime(),
-                        'reservePrice': 100,
-                        'startingBid': 10
+                        'reservePrice': this.editAuction.reservePrice,
+                        'startingBid': this.editAuction.startingBid
                     }
                 this.$http.patch(
                     'http://localhost:4941/api/v1/auctions/' + this.$route.params.auctionId, 
@@ -346,10 +374,7 @@
             },
 
             checkBid: function () {
-                if (this.placedBidAmount <= this.currentBestBid.amount) {
-                    alert("Bid is lower than current best bid");
-                    return;
-                }
+                
 
                 if (this.auction.startDateTime > new Date(Date.now())) {
                     alert("Auction has yet to start");
@@ -357,6 +382,11 @@
                 } else if (this.auction.endDateTime < new Date(Date.now())) {
                     alert("Auction has already ended");
                     return
+                }
+
+                if (this.placedBidAmount <= this.currentBestBid.amount) {
+                    alert("Bid is lower than current best bid");
+                    return;
                 }
                 this.placeBid();
             },

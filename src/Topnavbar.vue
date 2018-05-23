@@ -307,15 +307,13 @@
                         this.loginEmail = this.email;
                         this.loginPassword = this.password;
                         this.loginUser();
-                        this.refreshAuthUser(); 
-
                     },
                     function (error) {
                         if (error.body == "Bad Request") {
                             alert("User or email must not be unique");
                         } else {
                             alert("Error creating account");
-                             console.log(error);
+                            console.log(error);
                         }
                     }
                 )

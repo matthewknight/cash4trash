@@ -5,7 +5,7 @@
 
 import {
     router
-} from '../main'
+} from '../main.js'
 
 export default {
 
@@ -32,17 +32,18 @@ export default {
     },
 
     login(context, creds, done) {
+        console.log("Attempting login...");
         context.$http.post('http://localhost:4941/api/v1/users/login', creds).then(
             response => {
                 $('#loginUser').modal('hide');
                 localStorage.setItem('id_token', response.data.id);
                 localStorage.setItem('access_token', response.data.token);
-                console.log(this.user);
+                console.log("Successfully logged in");
                 this.user.authenticated = true;
-                console.log("Auth: Setting Auth = true");
-                this.getLoggedInAccount(context);
-                location.reload();
-                done();
+                
+                this.getLoggedInAccount(context, done);
+                router.push({ name: 'home' })
+                
             }, error => {
                 console.log(error);
                 alert("Failed login!");
@@ -61,7 +62,7 @@ export default {
                 this.user.authenticated = false
                 console.log("Auth: Setting Auth = false");
                 this.loggedInUser = [];
-                location.reload();
+                router.push({ name: 'home' })
                 done();
             }, error => {
                 console.log(error);
@@ -79,6 +80,7 @@ export default {
             console.log("Auth: Setting Auth = true with username " + this.loggedInUser.username);
         } else {
             this.user.authenticated = false
+            done();
             console.log("Auth: Setting Auth = false");
         }
     },

@@ -99,6 +99,12 @@
                                     </td>
                                     </tr>
                                     <tr>
+                                    <td>Reserve Price $<input v-model="createAuction.reservePrice" type="number"></td>
+                                    </tr>
+                                    <tr>
+                                    <td>Starting Bid $<input v-model="createAuction.startingBid" type="number"></td>
+                                    </tr>
+                                    <tr>
                                         <td><i>ĩtem</i> photo&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="file" name="pic" accept="image/png, image/jpeg" @change="onFileChanged"> </td>
                                     </tr>
                                 </tbody>
@@ -149,6 +155,8 @@
                     endDate: "",
                     description: "",
                     categoryId: 1,
+                    reservePrice: 0,
+                    startingBid: 0,
                     selectedFile: null,
                 }
             }
@@ -235,6 +243,18 @@
                     alert('Auction start date is after end date');
                     return;
                 }
+
+                if (this.createAuction.reservePrice < 1) {
+                    alert('Reserve price too low');
+                    this.createAuction.reservePrice = 1;
+                    return;
+                }
+
+                if (this.createAuction.startingBid < 1) {
+                    alert('Starting bid too low');
+                    this.createAuction.startingBid = 1;
+                    return;
+                }
                 console.log("Auctions: new auction valid");
                 this.submitNewAuction();
             },
@@ -246,8 +266,8 @@
                         'description': this.createAuction.description,
                         'startDateTime': new Date(this.createAuction.startDate).getTime(),
                         'endDateTime': new Date(this.createAuction.endDate).getTime(),
-                        'reservePrice': 100,
-                        'startingBid': 10
+                        'reservePrice': this.createAuction.reservePrice,
+                        'startingBid': this.createAuction.startingBid
                     }
                 console.log("Auctions: submitting new auction");
                 this.$http.post(
@@ -268,6 +288,9 @@
             },
             
             uploadPhoto(id) {
+                if (this.createAuction.selectedFile == null) {
+                    return;
+                }
                 console.log("UPLOADING NEW PHOTO... of type " + this.createAuction.selectedFile.type)
                 let headerConfig = {}
                 if (this.createAuction.selectedFile.type === 'image/png') {
@@ -284,6 +307,7 @@
                     this.createAuction.selectedFile, headerConfig).then(response => {
                     // get body data
                     console.log("added photo")
+                    location.reload();
                 }, error => {
                     // error callback
                     console.log("error adding photo: " + error);
