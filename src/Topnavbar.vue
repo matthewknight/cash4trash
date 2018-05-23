@@ -38,8 +38,10 @@
                     <div class="modal-body">
                         <ul>
                             <li><router-link :to="{ name: 'myauctions' }">My Åuctions</router-link></li>
+                            <li><router-link :to="{ name: 'mywonauctions' }">My Won Åuctions</router-link></li>
+                            <li><router-link :to="{ name: 'myexpiredauctions' }">My Expired auctions</router-link></li>
                             <li><router-link :to="{ name: 'myauctionsbids' }">My Bid on Auctions</router-link></li>
-                            <li><router-link :to="{ name: 'mywonauctions' }">My Won Auctions!</router-link></li>
+                            <li><router-link :to="{ name: 'mywonitems' }">My Won Trash!</router-link></li>
                             <li><router-link :to="{ name: 'user', params: { userId: loggedInUser.id }}">Ma profile :3</router-link></li>
                         </ul>
                     </div>

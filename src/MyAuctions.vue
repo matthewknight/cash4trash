@@ -45,7 +45,7 @@
                 this.currentUser = auth.loggedInUser;
                 console.log("Calling getAuctions... with id " + this.currentUser.id);
 
-                let params = { "seller" : this.currentUser.id };
+                let params = { "seller" : this.currentUser.id, "status" : 'active' };
                 
                 this.$http.get('http://localhost:4941/api/v1/auctions', {params: params}).then(
                     function (response) {

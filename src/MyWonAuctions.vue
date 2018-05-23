@@ -23,7 +23,7 @@
     </div>
 </template>
 
-<script>    
+<script>
     import auth from './auth'
     export default {
         data() {
@@ -43,10 +43,11 @@
             getAuctions: function () {
                 $('#redirectUser').modal('hide');
                 this.currentUser = auth.loggedInUser;
+                console.log("Calling getAuctions... with id " + this.currentUser.id);
 
-                let params = { "winner" : this.currentUser.id };
+                let params = { "seller" : this.currentUser.id, "status" : 'won' };
                 
-                this.$http.get('http://localhost:4941/api/v1/my_won_auctions', {headers: auth.getAuthHeader()}).then(
+                this.$http.get('http://localhost:4941/api/v1/auctions', {params: params}).then(
                     function (response) {
                         this.auctions = response.data;
                         this.getPhotos();
