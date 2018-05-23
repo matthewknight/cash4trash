@@ -131,7 +131,8 @@
 
                     <!-- Modal footer -->
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-success">Create</button>
+                        <button style="float: left" type="button" class="btn btn-danger" v-on:click="removePhoto">Remove Photo</button>
+                        <button type="button" class="btn btn-success" v-on:click="checkEditAuction">Create</button>
                         <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
                     </div>
 
@@ -168,7 +169,7 @@
         },
 
         mounted: function () {
-            auth.checkAuth(this, this.getAuction());
+            auth.checkAuth(this, this.getAuction);
         },
 
         methods: {
@@ -212,8 +213,8 @@
                         this.editAuction.title = this.auction.title;
                         console.log("Auction start date: " + this.auction.startDateTime);
                         console.log("Auction end date: " + this.auction.endDateTime);
-                        this.editAuction.startDate = new Date(this.auction.startDateTime).toDateString("YYYY-MM-DDTHH:II:SS");
-                        this.editAuction.endDate = new Date(this.auction.endDateTime).toDateString("YYYY-MM-DDTHH:II:SS");  
+                        this.editAuction.startDate = new Date(this.auction.startDateTime).toDateString("yyyy-MM-ddThh:mm");
+                        this.editAuction.endDate = new Date(this.auction.endDateTime).toDateString("yyyy-MM-ddThh:mm");  
                         this.editAuction.categoryId = this.auction.categoryId;
                         this.editAuction.description = this.auction.description;
 
@@ -228,28 +229,28 @@
 
             checkEditAuction: function () {
                 console.log("Auctions: checking validity of new auction")
-                this.createAuction['startDateUnix'] = new Date(this.createAuction.startDate).getTime();
-                this.createAuction['endDateUnix'] = new Date(this.createAuction.endDate).getTime();
+                this.editAuction['startDateUnix'] = new Date(this.editAuction.startDateTime).getTime();
+                this.editAuction['endDateUnix'] = new Date(this.editAuction.endDateTime).getTime();
 
                 // Check auction title
-                if (this.createAuction.title == '' || this.createAuction.title == null) {
+                if (this.editAuction.title == '' || this.editAuction.title == null) {
                     alert('Please enter an auction title');
                     return;
                 }
 
                 // Check auction description
-                if (this.createAuction.description == '' || this.createAuction.description == null) {
+                if (this.editAuction.description == '' || this.editAuction.description == null) {
                     alert('Please enter an auction description');
                     return;
                 }
 
-                if (this.createAuction.startDate == '' || this.createAuction.startDate == null) {
+                if (this.editAuction.startDate == '' || this.editAuction.startDate == null) {
                     alert('Please enter an auction start date');
                     return;
-                } else if (this.createAuction.startDateUnix < new Date(Date.now())) {
+                } else if (this.editAuction.startDateUnix < new Date(Date.now())) {
                     alert('Start datetime is before now');
                     return;
-                } else if (this.createAuction.startDateUnix >= this.createAuction.endDateUnix) {
+                } else if (this.editAuction.startDateUnix >= this.editAuction.endDateUnix) {
                     alert('Auction start date is after end date');
                     return;
                 }
@@ -270,16 +271,13 @@
                         'reservePrice': 100,
                         'startingBid': 10
                     }
-                console.log("Auctions: submitting new auction");
                 this.$http.patch(
-                    'http://localhost:4941/api/v1/auctions', 
+                    'http://localhost:4941/api/v1/auctions/' + this.$route.params.auctionId, 
                     auctionData, {headers: auth.getAuthHeaderSetJSON()}
                 ).then(response => {
                     // get body data
-                    alert("Successfully created auction");
-                    this.getAuctions();
-                    this.uploadPhoto(response.data.id);
-                    console.log("GOT ID FROM RESPONSE: " + response.data.id );
+                    alert("Successfully updated auction");
+                    this.uploadPhoto();
                 }, error => {
                     // error callback
                     alert("Failed to create auction");
@@ -287,8 +285,41 @@
                 });
             },
 
+            uploadPhoto(done = function () {}) {
+                if (this.editAuction.selectedFile == null) {
+                    location.reload();
+                    return;
+                }
+                console.log("UPLOADING NEW PHOTO... of type " + this.editAuction.selectedFile.type)
+                let headerConfig = {}
+                if (this.editAuction.selectedFile.type === 'image/png') {
+                    headerConfig = { headers: auth.getAuthHeaderSetPNG() }
+                } else if (this.editAuction.selectedFile.type === 'image/jpeg') {
+                    headerConfig = { headers: auth.getAuthHeaderSetJPEG() }
+                } else {
+                    alert("Failed to upload photo, invalid format");
+                    return;
+                }
+
+                this.$http.post(
+                    'http://localhost:4941/api/v1/auctions/' + this.$route.params.auctionId + '/photos',
+                    this.editAuction.selectedFile, headerConfig).then(response => {
+                    // get body data
+                    console.log("added photo")
+                    location.reload();
+                    done();
+                }, error => {
+                    // error callback
+                    console.log("error adding photo: " + error);
+                });
+            },
+
             onFileChanged (event) {
-                this.createAuction.selectedFile = event.target.files[0];
+                this.editAuction.selectedFile = event.target.files[0];
+            },
+
+            removePhoto: function () {
+                console.log("Remove photo called");
             },
 
             checkBid: function () {

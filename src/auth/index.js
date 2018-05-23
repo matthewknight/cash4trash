@@ -26,19 +26,22 @@ export default {
                 done();
             }, error => {
                 alert("Failed to get current logged in account");
+                console.log(error);
             }
         )
     },
 
     login(context, creds, done) {
-        context.$http.post('http://localhost:4941/api/v1/users/login', creds).then(response => {
+        context.$http.post('http://localhost:4941/api/v1/users/login', creds).then(
+            response => {
                 $('#loginUser').modal('hide');
                 localStorage.setItem('id_token', response.data.id);
                 localStorage.setItem('access_token', response.data.token);
                 console.log(this.user);
                 this.user.authenticated = true;
                 console.log("Auth: Setting Auth = true");
-                this.getLoggedInAccount(context, );
+                this.getLoggedInAccount(context);
+                location.reload();
                 done();
             }, error => {
                 console.log(error);
@@ -58,6 +61,7 @@ export default {
                 this.user.authenticated = false
                 console.log("Auth: Setting Auth = false");
                 this.loggedInUser = [];
+                location.reload();
                 done();
             }, error => {
                 console.log(error);
