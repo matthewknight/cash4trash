@@ -13,7 +13,11 @@
             <!-- All auctions table -->
             <div>
                 {{ currentUser.username }}
+                {{ currentUser.givenName }}
+                {{ currentUser.familyName }}
                 <p v-if="ownsAccount"> {{ currentUser.accountBalance }}</p>
+                <p v-if="ownsAccount"> {{ currentUser.email }}</p>
+                <p v-if="ownsAccount"> {{ currentUser.password }}</p>
             </div>
         </div>
     </div>
@@ -46,7 +50,6 @@
                             //Logged in owns this account
                             this.ownsAccount = true;
                         }
-                        done();
                     }, error => {
                         alert("Failed to get user");
                         console.log(error);

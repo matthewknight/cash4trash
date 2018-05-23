@@ -23,7 +23,7 @@
 
 
                 <br/><br/>
-                <h3>Seller Username: {{ seller.username }}</h3>
+                <h3>Seller Username: <router-link :to="{ name: 'user', params: { userId: seller.id }}">{{ seller.username }}</router-link></h3>
                 <h3>Seller ID: {{ seller.id }}</h3>
                 <p>{{ auction.description }}</p>
                 <div style="margin:auto">
@@ -42,7 +42,7 @@
                                 </tr>
                                 <tr v-for="bid in bids" :key="bid.dateTime">
                                     <th>{{ bid.amount }}</th>
-                                    <th>{{ bid.buyerUsername }}</th>
+                                    <th><router-link :to="{ name: 'user', params: { userId: bid.buyerId }}">{{ bid.buyerUsername }}</router-link></th>
                                     <th>{{ bid.dateString }} {{ bid.timeString }}</th>
                                 </tr>    
                             </table>
