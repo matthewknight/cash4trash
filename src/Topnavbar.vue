@@ -39,7 +39,7 @@
                         <ul>
                             <li><router-link :to="{ name: 'myauctions' }">My Åuctions</router-link></li>
                             <li><router-link :to="{ name: 'myauctionsbids' }">My Bid on Auctions</router-link></li>
-                            <li><router-link :to="{ name: 'myauctionsbids' }">My Winning Bids on Auctions</router-link></li>
+                            <li><router-link :to="{ name: 'mywonauctions' }">My Won Auctions!</router-link></li>
                             <li><router-link :to="{ name: 'user', params: { userId: loggedInUser.id }}">Ma profile :3</router-link></li>
                         </ul>
                     </div>

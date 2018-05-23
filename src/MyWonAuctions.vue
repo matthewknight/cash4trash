@@ -7,7 +7,7 @@
 
         <div>
             <!-- Banner -->
-            <img src="./assets/mybidsBanner.png">
+            <img src="./assets/mywonauctionsBanner.png">
 
             <br/><br/>
             <!-- All auctions table -->
@@ -43,11 +43,10 @@
             getAuctions: function () {
                 $('#redirectUser').modal('hide');
                 this.currentUser = auth.loggedInUser;
-                console.log("Calling getAuctions... with id " + this.currentUser.id);
 
-                let params = { "bidder" : this.currentUser.id };
+                let params = { "winner" : this.currentUser.id };
                 
-                this.$http.get('http://localhost:4941/api/v1/auctions', {params: params}).then(
+                this.$http.get('http://localhost:4941/api/v1/my_won_auctions', {headers: auth.getAuthHeader()}).then(
                     function (response) {
                         this.auctions = response.data;
                         this.getPhotos();

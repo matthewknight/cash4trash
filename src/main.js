@@ -4,6 +4,7 @@ import Home from "./Home.vue";
 import Auctions from "./Auctions.vue";
 import Auction from "./Auction.vue";
 import MyAuctions from "./MyAuctions.vue";
+import MyWonAuctions from "./MyWonAuctions.vue";
 import MyBids from "./MyBids.vue";
 import User from "./User.vue";
 
@@ -35,7 +36,12 @@ const routes = [
         component: MyAuctions
     },
     {
-        path: "/trashinwhichihavepromisedmoneyfor",
+        path: "/trashivepromisedmoneyfor",
+        name: "mywonauctions",
+        component: MyWonAuctions
+    },
+    {
+        path: "/trashivebiddedfor",
         name: "myauctionsbids",
         component: MyBids
     },
