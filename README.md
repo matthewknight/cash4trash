@@ -1,8 +1,12 @@
-# cash4trash
+# cash4trash (Simple Auction style site client using Vue.js)
 
 > The People's Choice in Online Trash Swindling
 
+> This site was designed in mind for extra creativity marks and I would describe its visual appeal as 'polarising'
+
 ## Build Setup
+
+# Also requires an auction server with a certain API specification
 
 ``` bash
 # install dependencies
